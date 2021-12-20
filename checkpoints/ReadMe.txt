@@ -1,0 +1,1 @@
+In this folder you should have the model checkpoint (weightes). Unfortunately, github don't accept larg files
