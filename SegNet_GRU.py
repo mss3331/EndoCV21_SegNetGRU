@@ -35,7 +35,7 @@ class SegNetGRU_Symmetric_columns_UltimateShare(nn.Module):
     The gru units are shared between encoding and decoding
     '''
 
-    def __init__(self, input_channels, num_classes):
+    def __init__(self, input_channels=3, num_classes=2, VGG_pretrained=True):
         super(SegNetGRU_Symmetric_columns_UltimateShare, self).__init__()
 
         self.input_channels = input_channels
@@ -43,7 +43,7 @@ class SegNetGRU_Symmetric_columns_UltimateShare(nn.Module):
 
         self.num_channels = input_channels
 
-        self.vgg16 = models.vgg16(pretrained=True)
+        self.vgg16 = models.vgg16(pretrained=VGG_pretrained)
 
         # Encoder layers
 
@@ -166,8 +166,8 @@ class SegNetGRU_Symmetric_columns_UltimateShare(nn.Module):
         # self.rnn_4_row = nn.GRU(input_size=512, hidden_size=256, num_layers=1, batch_first=True)
         # self.rnn_4_column = nn.GRU(input_size=512, hidden_size=256, num_layers=1, batch_first=True)
         # finish last stage5
-
-        # self.init_vgg_weigts()
+        if VGG_pretrained:
+            self.init_vgg_weigts()
 
         # Decoder layers
 
@@ -473,3 +473,14 @@ class SegNetGRU_Symmetric_columns_UltimateShare(nn.Module):
         # self.encoder_conv_42[0].weight.data = self.vgg16.features[28].weight.data
         # assert self.encoder_conv_42[0].bias.size() == self.vgg16.features[28].bias.size()
         # self.encoder_conv_42[0].bias.data = self.vgg16.features[28].bias.data
+
+
+if __name__=='__main__':
+    model = SegNetGRU_Symmetric_columns_UltimateShare(VGG_pretrained=True)
+    input = torch.rand((4,3,100,100))
+    output = model(input)
+    print('output dim = ',output.shape)
+    # of param of UltimateShare= 180007914
+    number_of_parameters= total_params = sum(param.numel() for param in model.parameters())
+    print('# of param of UltimateShare=',number_of_parameters)
+

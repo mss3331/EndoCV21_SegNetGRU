@@ -17,7 +17,7 @@ from PIL import Image
 import skimage
 from skimage import io
 from  tifffile import imsave
-from Detection import detect
+from helpers.Detection import detect
 import skimage.transform
 from torchvision import models
 from SegNet_GRU import SegNetGRU_Symmetric_columns_UltimateShare as SegNet_GRU_model
@@ -89,22 +89,22 @@ if __name__ == '__main__':
             competition is fair and results are replicative.
     '''
     # model, device = mymodel()
-    checkpoint = torch.load('./checkpoints/highest_IOU_SegNetGRU_Symmetric_columns_UltimateShare.pt')
+    checkpoint = torch.load('./checkpoints/SegNetGRU.pt')
     model = SegNet_GRU_model(input_channels=3, num_classes=2)
     model.load_state_dict(checkpoint['state_dict'])
-
+    print('Best val accuracy:', checkpoint['accuracy'])
     task_type = 'segmentation'
     # set image folder here!
     directoryName = create_predFolder(task_type)
     
     # ----> three test folders [https://github.com/sharibox/EndoCV2021-polyp_det_seg_gen/wiki/EndoCV2021-Leaderboard-guide]
-    subDirs = ['EndoCV_DATA1', 'EndoCV_DATA2', 'EndoCV_DATA3']
+    subDirs = ['EndoCV_DATA1']#, 'EndoCV_DATA2', 'EndoCV_DATA3']
     
     for j in range(0, len(subDirs)):
         
         # ---> Folder for test data location!!! (Warning!!! do not copy/visulise!!!)
-        imgfolder='/project/def-sponsor00/endocv2021-test-noCopyAllowed-v1/' + subDirs[j]
-        # imgfolder = './testfolders/' + subDirs[j]#************************************Delete this one before uploading!!!!!
+        # imgfolder='/project/def-sponsor00/endocv2021-test-noCopyAllowed-v1/' + subDirs[j]
+        imgfolder = './testfolders/' + subDirs[j]#************************************Delete this one before uploading!!!!!
         # set folder to save your checkpoints here!
         saveDir = os.path.join(directoryName , subDirs[j]+'_pred')
     
@@ -132,7 +132,7 @@ if __name__ == '__main__':
             start.record()
             
             resize_factor = 4
-            train_img_size = (int(1080 / resize_factor), int(1350 / resize_factor))
+            train_img_size = checkpoint['image_size']
           
 
             output = detect(model,imagePath, train_img_size)
