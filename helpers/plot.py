@@ -17,7 +17,7 @@ def plot_result(num_epochs,results_dic):
     plt.plot(range(1,num_epochs+1),train_acc,"k",label="Train Acc")
     plt.plot(range(1,num_epochs+1),train_loss,"--k",label="Train Loss")
     plt.ylim((0,1.))
-    plt.xticks(np.arange(1, num_epochs+1, 1))
+    plt.xticks(np.arange(1, num_epochs+1, 10))
     plt.yticks(np.arange(0,1.5, 0.1))
     plt.legend()
     plt.grid(True)

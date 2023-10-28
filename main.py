@@ -13,7 +13,8 @@ import numpy as np
 
 def get_Dataloaders_dic(data_dir,train_val_ratio, input_size, shuffle,batch_size):
     Dataloaders_dic = {}
-
+    # you can add more than 'data_C1','data_C2' (e.g., ['data_C1','data_C2','data_C3','data_C4']
+    # It will be combined together and split into train/val according to the train_val_ratio
     dataloasers = getLoaders(['data_C1','data_C2'], input_size, data_dir=data_dir,
                              train_val_ratio=train_val_ratio, shuffle=shuffle, batch_size=batch_size)
     Dataloaders_dic['train'], Dataloaders_dic['val'] = dataloasers
@@ -32,8 +33,8 @@ def run():
     model_name = "SegNetGRU"
     # Number of classes in the dataset
     learning_rate = 0.01
-    batch_size = 2
-    input_size = (100, 100)
+    batch_size = 14
+    input_size = (180, 225)
     train_val_ratio= 0.7 #i.e., 70% for training and 30% for validation
     shuffle= True # shuffle the images before split into train/val sets
     #batch_size = 16

@@ -21,6 +21,7 @@ def train_model(model, dataloaders, criterion, optimizer,device, num_epochs,inpu
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
+    best_iou = 0.0
 
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch+1, num_epochs))
@@ -78,24 +79,26 @@ def train_model(model, dataloaders, criterion, optimizer,device, num_epochs,inpu
             print('{} IoU: {:.4f} Loss: {:.4f} Acc: {:.4f}'.format(phase,iou, epoch_loss, epoch_acc))
 
             # deep copy the model
-            if phase == 'val' and epoch_acc > best_acc:
+            if phase == 'val' and iou > best_iou:
+                best_iou = iou
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
             update_results(phase,results_dic,epoch_acc,epoch_loss)
             if phase == 'val':
-                print('Best So far {} Acc: {:.4f}'.format(phase, best_acc))
+                print('Best So far {} iou: {:.4f}'.format(phase, best_iou))
 
         print()
 
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
-    print('Best val Acc: {:4f}'.format(best_acc))
+    print('Best val iou:{:4f} and Acc: {:4f}'.format(best_iou, best_acc))
 
     # load best model weights
     model.load_state_dict(best_model_wts)
     checkpoint = {
         'accuracy': best_acc,
+        'iou': best_iou,
         'state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'image_size':input_size
